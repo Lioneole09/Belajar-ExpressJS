@@ -1,0 +1,83 @@
+// import express from "express";
+// import type { Request, Response } from "express";
+
+// const app = express();
+// const PORT = 3000;
+
+// // ⚙️ MIDDLEWARE WAJIB: Menggantikan fungsi manual parsing stream buffer bawaan Node.js
+// // Baris ini membuat Express otomatis membaca request body berformat JSON menjadi objek 'req.body'
+// app.use(express.json());
+
+// // ==========================================
+// // 1. HTTP GET: Membaca Semua Data Produk (Simulasi DummyJSON /products)
+// // ==========================================
+// app.get("/products", (req: Request, res: Response) => {
+//   res.status(200).json({
+//     success: true,
+//     message: "Fetch products from local mock data successful",
+//     products: [
+//       { id: 1, title: "iPhone 13", price: 899 },
+//       { id: 2, title: "MacBook Pro", price: 1999 }
+//     ]
+//   });
+// });
+
+
+// // ==========================================
+// // 2. HTTP POST: Menambahkan Produk Baru
+// // ==========================================
+// app.post("/products", (req: Request, res: Response) => {
+//   // Membaca data kiriman dari client
+//   const { title, price } = req.body;
+
+//   // Validasi dasar
+//   if (!title || !price) {
+//      res.status(400).json({ success: false, message: "Title and price are required!" });
+//      return;
+//   }
+
+//   res.status(201).json({
+//     success: true,
+//     message: "Product created successfully (Mocked)",
+//     data: { id: Math.floor(Math.random() * 100), title, price }
+//   });
+// });
+
+
+// // ==========================================
+// // 3. HTTP PUT: Memperbarui Data Produk Menggunakan Parameter URL Dinamis
+// // ==========================================
+// // Kita gunakan Interface TypeScript untuk mengetik tipe data parameter URL (:id) agar aman
+// interface IProductParams {
+//   id: string;
+// }
+
+// app.put("/products/:id", (req: Request<IProductParams>, res: Response) => {
+//   const { id } = req.params; // Otomatis bertipe string sesuai interface IProductParams
+//   const { title, price } = req.body;
+
+//   console.log(`Menyiapkan pembaruan untuk Produk ID #${id}`);
+
+//   res.status(200).json({
+//     success: true,
+//     message: `Product with ID ${id} updated successfully`,
+//     updatedData: { title, price }
+//   });
+// });
+
+// // ==========================================
+// // 4. HTTP DELETE: Menghapus Produk
+// // ==========================================
+// app.delete("/products/:id", (req: Request<IProductParams>, res: Response) => {
+//   const { id } = req.params;
+
+//   res.status(200).json({
+//     success: true,
+//     message: `Product with ID ${id} has been deleted successfully from system.`
+//   });
+// });
+
+// // 🚀 NYALAKAN SERVER MENDENGARKAN PORT JALUR 3000
+// app.listen(PORT, () => {
+//   console.log(`⚡ [SERVER RUNNING]: Server POS Express berjalan di http://localhost:${PORT}`);
+// });

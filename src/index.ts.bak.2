@@ -1,0 +1,55 @@
+import express from "express";
+import type { Request, Response, NextFunction } from "express";
+import cors from "cors";
+import { reqLogger } from "./middleware/logger.middleware.js";
+import { globalErrorHandler } from "./middleware/error.middleware.js";
+import { validate } from "./middleware/validate.middleware.js";
+import { CreateProductSchema } from "./schemas/product.schema.js";
+
+const app = express();
+const PORT = 3000;
+
+// ⚙️ MIDDLEWARE WAJIB: Menggantikan fungsi manual parsing stream buffer bawaan Node.js
+// Baris ini membuat Express otomatis membaca request body berformat JSON menjadi objek 'req.body'
+app.use(cors()); //membuka set lintas domain
+app.use(express.json()); //parshing json
+app.use(reqLogger); //mencatat log aktivity
+
+
+// ==========================================
+// 2. HTTP POST: Menambahkan Produk Baru
+// ==========================================
+app.post("/products", 
+  validate(CreateProductSchema),
+  async (
+    req: Request, 
+    res: Response,
+  next: NextFunction)
+  : Promise<void> => {
+    try {
+      const{ title, price } = req.body;
+
+      const isDatabaseConnected = false;
+      if (!isDatabaseConnected) {
+        // Alih-alih menulis res.status(500) di sini, kita lempar (throw) erornya agar ditangkap blok catch
+        throw new Error("Database connection dropped unexpectedly during data insertion!");
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Product verified and added to database cleanly",
+        product: { id: 151, title, price }
+      });
+    } catch (err) {
+      // 🔥 REVISI: Eror dari blok try ditangkap di sini, lalu diteruskan ke Global Error Handler via next()
+      next(err); 
+    }
+  }
+);
+
+// 3. JARING PENGAMAN AKHIR (Wajib ditaruh paling bawah setelah semua rute dideklarasikan)
+app.use(globalErrorHandler);
+
+app.listen(PORT, () => {
+  console.log(`⚡ [SERVER RUNNING]: Server POS Express berjalan di http://localhost:${PORT}`);
+});
